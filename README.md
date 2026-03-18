@@ -8,9 +8,17 @@
 > National University of Defense Technology, China.<br/>
 > [**arXiv 2025**](http://arxiv.org/abs/2503.12527) 
 
+To do：
+- [ ] Evaluation code for IPNet.
+- [ ] Trained model and IMU bias labels.
+- [ ] Training code.
+
+## News
+- **March 2026**: Accepted in IEEE Transactions on Instrumentation & Measurement.
+
 ##  TL;DR
 
-The bias of low-cost Inertial Measurement Units (IMU) can be estimated using Visual-Inertial Odometry (VIO) by combining constraints from visual features and inertial measurements. However, the precision of this bias estimation is highly dependent on the quality of the visual features. When visual tracking encounters errors, the bias optimization results can deviate significantly from the real values, compromising system stability and localization precision. In this paper, we propose a novel framework featuring a plug-and-play learning-based IMU bias factor, with its core being the Inertial Prior Network (IPNet). Recognizing the substantial impact of initial bias errors in low-cost inertial devices on system performance, our network directly leverages raw IMU data to estimate the mean bias, eliminating the dependency on historical bias values and effectively preventing error propagation. Furthermore, to overcome the challenge posed by the lack of bias labels in many visual-inertial datasets, we introduce an iterative approach to calculate the mean value of the bias. 
+Accurate and reliable estimation of biases of low-cost Inertial Measurement Units (IMU) is a key factor to maintain the resilience of Visual-Inertial Odometry (VIO), particularly when visual tracking fails in challenging areas. To address the issue of inaccurate estimation of low-cost IMU bias resulting from visual tracking failures, we propose an Inertial Prior Network (IPNet), a plug-and-play module that captures platform-specific motion characteristics directly from raw IMU measurements to infer bias priors. This approach eliminates the dependency on recursive bias estimation combining visual features, thus effectively preventing error propagation in challenging areas. Additionally, to compensate for the scarcity of ground-truth bias in most visual-inertial datasets, we introduce an iterative method to compute the mean IMU bias for each sequence to facilitate network training. Extensive experimental results on the EuRoC and TumVi public datasets, as well as an in-house dataset, demonstrate that the IPNet significantly enhances localization precision and robustness. Specifically,on the public benchmarks, the average improvements in ATE-RMSE and RPE-RMSE reached 46\% and 48\%, respectively. Moreover, the model’s cross-scene generalization is confirmed by successfully applying the indoor-trained prior network to outdoor autonomous driving scenarios.
 
 ## Overview
 
