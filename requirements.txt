@@ -1,0 +1,10 @@
+# Verified against the author's conda base environment (Python 3.10.8).
+# If you need a specific CUDA build, install the matching PyTorch wheel first.
+numpy==1.23.5
+scipy==1.10.0
+matplotlib==3.10.6
+seaborn==0.12.2
+tqdm==4.64.1
+pyhocon==0.3.61
+pypose==0.6.8
+torch==2.6.0

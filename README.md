@@ -2,45 +2,93 @@
   <h1>A Plug-and-Play Learning-based IMU Bias Factor for Robust Visual-Inertial Odometry</h1>
 </div>
 
+<h3 align="center">
+    <a href="">Yang Yi</a>, 
+    <a href="">Kunqing Wang</a>, 
+    <a href="">Jinpu Zhang</a>,
+    <a href="">Zhen Tan</a>, 
+    <a href="">Xiangke Wang</a>, 
+    <a href="">Hui Shen</a><sup>*</sup>, 
+    <a href="">Dewen Hu</a>
+</h3>
 
-> **A Plug-and-Play Learning-based IMU Bias Factor for Robust Visual-Inertial Odometry**<br/>
-> Yang Yi, Kunqing Wang, Jinpu Zhang, Zhen Tan, Xiangke Wang, Hui Shen and Dewen Hu<br/>
-> National University of Defense Technology, China.<br/>
-> [**arXiv 2025**](http://arxiv.org/abs/2503.12527) 
+<p align="center">
+    <a href="https://pytorch.org/">
+        <img src="https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white" />
+    </a>
+    <a href="">
+        <img src="https://img.shields.io/badge/Python-3.10+-blue" />
+    </a>
+    <a href="">
+        <img src="https://img.shields.io/badge/Status-TIM Accept-green" />
+    </a>
+</p>
 
-To do：
-- [ ] Evaluation code for IPNet.
-- [ ] Trained model and IMU bias labels.
-- [ ] Training code.
+## Tested Environment
 
-## News
-- **March 2026**: Accepted in IEEE Transactions on Instrumentation & Measurement.
+- OS: Ubuntu 20.04.6 LTS
+- CUDA: 12.4
+- PyTorch: 2.6.0+cu124
 
-##  TL;DR
+<video controls width="600" src="Video/IPNet.mp4"></video>
 
-Accurate and reliable estimation of biases of low-cost Inertial Measurement Units (IMU) is a key factor to maintain the resilience of Visual-Inertial Odometry (VIO), particularly when visual tracking fails in challenging areas. To address the issue of inaccurate estimation of low-cost IMU bias resulting from visual tracking failures, we propose an Inertial Prior Network (IPNet), a plug-and-play module that captures platform-specific motion characteristics directly from raw IMU measurements to infer bias priors. This approach eliminates the dependency on recursive bias estimation combining visual features, thus effectively preventing error propagation in challenging areas. Additionally, to compensate for the scarcity of ground-truth bias in most visual-inertial datasets, we introduce an iterative method to compute the mean IMU bias for each sequence to facilitate network training. Extensive experimental results on the EuRoC and TumVi public datasets, as well as an in-house dataset, demonstrate that the IPNet significantly enhances localization precision and robustness. Specifically,on the public benchmarks, the average improvements in ATE-RMSE and RPE-RMSE reached 46\% and 48\%, respectively. Moreover, the model’s cross-scene generalization is confirmed by successfully applying the indoor-trained prior network to outdoor autonomous driving scenarios.
+## Installation
 
-## Overview
+We recommend Python 3.10.
 
-![](Fig/frame.png)
+```bash
+conda create -n ipnet python=3.10
+conda activate ipnet
+pip install -r requirements.txt
+```
 
-## Robustness Evaluation (click for video)
+## Training
 
+```bash
+python train.py --config configs/euroc.conf --device cuda:0
+```
 
-|              Seq.               |                           Baseline                           |                             Ours                             |
-| :-----------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-|          V2_02(Euroc)           | <video width="640" height="360" controls>   <source src="Video/V2_02.mp4" type="video/mp4">   V2_02. </video> | <video width="640" height="360" controls>   <source src="Video/V2_02_Ours.mp4" type="video/mp4">   V2_02_Ours. </video> |
-|          room5(TumVI)           | <video width="640" height="360" controls>   <source src="Video/room5.mp4" type="video/mp4">   room5. </video> | <video width="640" height="360" controls>   <source src="Video/room5_Ours.mp4" type="video/mp4">   room5_Ours. </video> |
-| seq04(A self-collected dataset) | <video width="640" height="360" controls>   <source src="Video/seq04.mp4" type="video/mp4">   seq04. </video> | <video width="640" height="360" controls>   <source src="Video/seq04_Ours.mp4" type="video/mp4">   seq04_Ours. </video> |
+On the first run, the script generates pseudo labels under `experiments/.../label/` and exits automatically. After that, rerun the script.
 
-## Localization Precision Evaluation(taking V1_02 as an example)
+## Inference
 
-| <img src="Fig/V1_02_traj.png" alt="V1_02_traj" width="800px" /> |
-| :----------------------------------------------------------: |
-| <img src="Fig/V1_02_xyz.png" alt="V1_02_xyz" width="800px" /> |
-| <img src="Fig/V1_02_rpy.png" alt="V1_02_rpy" width="800px" /> |
+```bash
+python inference.py --config configs/euroc.conf --device cuda:0
+```
+
+Predicted IMU bias and noise sequences are saved to `experiments/.../bag/<sequence>/<sequence>.csv`.
+
+## ROS Bag Export
+
+```bash
+python createbag.py --config configs/euroc.conf --device cuda:0
+```
+
+The exported bag file is written to `experiments/.../bag/<sequence>/<sequence>.bag`.
+
+## Visualize
+
+```bash
+python visualize_label.py --config configs/euroc.conf --device cuda:0
+```
+
+Figures are saved to `experiments/.../debug/`.
 
 ## Acknowledgement
 
-This work is build upon VINS-Fusion (https://github.com/HKUST-Aerial-Robotics/VINS-Fusion). 
+This work is built upon [VINS-Fusion](https://github.com/HKUST-Aerial-Robotics/VINS-Fusion).
 
+
+## Citation
+If you find our work useful, please cite:
+```bibtex
+@ARTICLE{11455506,
+  author={Yi, Yang and Wang, Kunqing and Zhang, Jinpu and Tan, Zhen and Wang, Xiangke and Shen, Hui and Hu, Dewen},
+  journal={IEEE Transactions on Instrumentation and Measurement}, 
+  title={A Plug-and-Play Learning-Based IMU Bias Factor for Robust Visual–Inertial Odometry}, 
+  year={2026},
+  volume={75},
+  number={},
+  pages={1-12},
+  doi={10.1109/TIM.2026.3676182}}
+```

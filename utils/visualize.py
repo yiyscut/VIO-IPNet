@@ -1,0 +1,111 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def plot_imu_bias(conf, dataset_name, bias_gyro, bias_acc, label):
+    fig, axs = plt.subplots(3, 2, figsize=(10, 8))
+    B = np.arange(len(bias_gyro))
+    gt_bias_gyro = label['gt_b_gyro'].cpu()
+    gt_bias_acc = label['gt_b_acc'].cpu()
+
+    axs[0][0].plot(B, gt_bias_gyro[:,0,0], color="#CC0033", label="Dataset_Label(gyro-bias-x)", alpha=1.0)
+    axs[0][0].plot(B, bias_gyro[:,0], color="#6699CC", label="Ours_Label", alpha=0.7)
+    axs[0][0].legend()
+    axs[0][0].grid()
+    axs[0][0].margins(y=0.3)
+    axs[0][0].autoscale(enable=True, axis='y', tight=False)
+
+    axs[1][0].plot(B, gt_bias_gyro[:,0,1], color="#CC0033", label="Dataset_Label(gyro-bias-y)", alpha=1.0)
+    axs[1][0].plot(B, bias_gyro[:,1], color="#6699CC", label="Ours_Label", alpha=0.7)
+    axs[1][0].legend()
+    axs[1][0].grid()
+    axs[1][0].margins(y=0.3)
+    axs[1][0].autoscale(enable=True, axis='y', tight=False)
+
+    axs[2][0].plot(B, gt_bias_gyro[:,0,2], color="#CC0033", label="Dataset_Label(gyro-bias-z)", alpha=1.0)
+    axs[2][0].plot(B, bias_gyro[:,2], color="#6699CC", label="Ours_Label", alpha=0.7)
+    axs[2][0].legend()
+    axs[2][0].grid()
+    axs[2][0].margins(y=0.3)
+    axs[2][0].autoscale(enable=True, axis='y', tight=False)
+
+    axs[0][1].plot(B, gt_bias_acc[:,0,0], color="#CC0033", label="Dataset_Label(acc-bias-x)", alpha=1.0)
+    axs[0][1].plot(B, bias_acc[:,0], color="#6699CC", label="Ours_Label", alpha=0.7)
+    axs[0][1].legend()
+    axs[0][1].grid()
+    axs[0][1].margins(y=0.3)
+    axs[0][1].autoscale(enable=True, axis='y', tight=False)
+
+    axs[1][1].plot(B, gt_bias_acc[:,0,1], color="#CC0033", label="Dataset_Label(acc-bias-y)", alpha=1.0)
+    axs[1][1].plot(B, bias_acc[:,1], color="#6699CC", label="Ours_Label", alpha=0.7)
+    axs[1][1].legend()
+    axs[1][1].grid()
+    axs[1][1].margins(y=0.3)
+    axs[1][1].autoscale(enable=True, axis='y', tight=False)
+
+    axs[2][1].plot(B, gt_bias_acc[:,0,2], color="#CC0033", label="Dataset_Label(acc-bias-z)", alpha=1.0)
+    axs[2][1].plot(B, bias_acc[:,2], color="#6699CC", label="Ours_Label", alpha=0.7)
+    axs[2][1].legend()
+    axs[2][1].grid()
+    axs[2][1].margins(y=0.3)
+    axs[2][1].autoscale(enable=True, axis='y', tight=False)
+
+    fig.suptitle(f'Comparison of IMU bias data in X, Y, and Z axes on {dataset_name}', fontsize=16)
+    plt.tight_layout()
+    plt.savefig(conf.output_path + f'label/{dataset_name}/imu_bias.png')
+    # plt.show()
+    plt.close()
+
+def plot_imu_noise(conf, dataset_name, noise_acc, noise_gyro):
+    image_noise_gyro = noise_gyro.cpu()
+    image_noise_gyro = image_noise_gyro.numpy()
+    image_noise_acc = noise_acc.cpu()
+    image_noise_acc = image_noise_acc.numpy()
+    noise_gyro_x = image_noise_gyro[:, :, 0].flatten()
+    noise_gyro_y = image_noise_gyro[:, :, 1].flatten()
+    noise_gyro_z = image_noise_gyro[:, :, 2].flatten()
+    noise_gyro_x = noise_gyro_x / max(np.abs(noise_gyro_x))
+    noise_gyro_y = noise_gyro_y / max(np.abs(noise_gyro_y))
+    noise_gyro_z = noise_gyro_z / max(np.abs(noise_gyro_z))
+    noise_acc_x = image_noise_acc[:, :, 0].flatten()
+    noise_acc_y = image_noise_acc[:, :, 1].flatten()
+    noise_acc_z = image_noise_acc[:, :, 2].flatten()
+    noise_acc_x = noise_acc_x / max(np.abs(noise_acc_x))
+    noise_acc_y = noise_acc_y / max(np.abs(noise_acc_y))
+    noise_acc_z = noise_acc_z / max(np.abs(noise_acc_z))
+
+    fig = plt.figure(figsize=(10, 8))
+    gs = fig.add_gridspec(2, 2, width_ratios=(4, 1), height_ratios=(1, 4))
+
+    ax = fig.add_subplot(gs[1, 0], projection='3d')
+    ax.scatter(noise_gyro_x, noise_gyro_y, noise_gyro_z, c='#6699CC', marker='o', alpha=0.6, label='Gyro-Noise Data')
+    ax.scatter(noise_acc_x, noise_acc_y, noise_acc_z, c='#CC0033', marker='^', alpha=0.6, label='Acc-Noise Data')
+    ax.set_xlabel('IMU-Noise-X')
+    ax.set_ylabel('IMU-Noise-Y')
+    ax.set_zlabel('IMU-Noise-Z')
+    ax.legend(loc='lower left')
+
+    with sns.axes_style("darkgrid"):
+        xDensity = fig.add_subplot(gs[0, 0])
+        sns.kdeplot(noise_gyro_x, fill=False, color="#6699CC", label="Gyro-Noise-X")
+        sns.kdeplot(noise_acc_x, fill=False, color="#CC0033", label="Acc-Noise-X")
+        xDensity.legend(loc='upper left')
+        xDensity.tick_params(axis="x", labelbottom=True)
+
+        zDensity = fig.add_subplot(gs[0, 1])
+        sns.kdeplot(noise_gyro_z, fill=False, color="#6699CC", label="Gyro-Noise-Z")
+        sns.kdeplot(noise_acc_z, fill=False, color="#CC0033", label="Acc-Noise-Z")
+        zDensity.legend(loc='upper right')
+        zDensity.tick_params(axis="y", labelleft=True)
+
+        yDensity = fig.add_subplot(gs[1, 1])
+        sns.kdeplot(y = noise_gyro_y, fill=False, color="#6699CC", label="Gyro-Noise-Y")
+        sns.kdeplot(y = noise_acc_y, fill=False, color="#CC0033", label="Acc-Noise-Y")
+        yDensity.legend(loc='lower right')
+        yDensity.tick_params(axis="y", labelleft=True)
+
+    fig.suptitle(f'IMU noise distribution in X, Y, and Z axes on {dataset_name}', fontsize=16)
+    plt.tight_layout()
+    plt.savefig(conf.output_path + f'label/{dataset_name}/imu_noise.png')
+    # plt.show()
+    plt.close()

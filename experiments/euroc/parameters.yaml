@@ -1,0 +1,62 @@
+device: cuda:0
+output_path: experiments/euroc/
+dataset_root: /home/yiyang/dataset/EuRoC/
+visualize_gt_root: /home/yiyang/dataset/EuRoC/
+batch_size: 32
+bias_input_size: 1000
+num_epochs: 100
+result_save_freq: 5
+dataset: 
+  train: 
+    mode: train
+    calib: false
+    data_list: 
+      - 
+        name: Euroc
+        window_size: 1000
+        step_size: 5
+        label_path: experiments/euroc/
+        data_root: /home/yiyang/dataset/EuRoC/
+        data_drive: 
+          - MH_01_easy
+          - MH_03_medium
+          - MH_04_difficult
+          - V1_03_difficult
+          - V2_03_difficult
+  test: 
+    mode: test
+    calib: false
+    data_list: 
+      - 
+        name: Euroc
+        window_size: 1000
+        step_size: 10
+        label_path: experiments/euroc/
+        data_root: /home/yiyang/dataset/EuRoC/
+        data_drive: 
+          - MH_02_easy
+          - V1_01_easy
+  inference: 
+    mode: evaluate
+    calib: false
+    data_list: 
+      - 
+        name: Euroc
+        topic_name: /imu0
+        window_size: 1000
+        step_size: 1
+        label_path: experiments/euroc/
+        data_root: /home/yiyang/dataset/EuRoC/
+        gt_root: /home/yiyang/dataset/EuRoC/
+        data_drive: 
+          - MH_05_difficult
+          - V1_02_medium
+          - V2_01_easy
+          - V2_02_medium
+          - MH_01_easy
+          - MH_02_easy
+          - MH_03_medium
+          - MH_04_difficult
+          - V1_01_easy
+          - V1_03_difficult
+          - V2_03_difficult
